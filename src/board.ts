@@ -18,9 +18,16 @@ export default class Board {
         this.matrix = []
     }
 
+    updateDimen(canvas: HTMLCanvasElement){
+        canvas.width = this.cols * this.cellSize
+        canvas.height = this.rows * this.cellSize
+        this.w = canvas.width
+        this.h = canvas.height
+    }
+
     // ---- CONSTRUCTION -----------------
 
-    build(level: number) {
+    build(level: number, canvas: HTMLCanvasElement) {
         this.matrix = Array.from({length: this.rows}, () => {
             return Array(this.cols).fill(CellType.DEFAULT)
         })
@@ -37,6 +44,12 @@ export default class Board {
                 this.placeArea(2,0,3,2,CellType.GREEN)
                 this.placeArea(2,this.cols-3,3,2,CellType.END)
                 this.placeArea(4,0,3,2,CellType.EMPTY,true)
+                break
+            case 3:
+                this.cols = 5
+                this.updateDimen(canvas)
+                this.placeRow(0,1,5,CellType.EMPTY)
+                this.placeArea(2,1,3,3,CellType.END)
                 break
         }
     }

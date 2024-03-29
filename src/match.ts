@@ -12,7 +12,7 @@ export default class Match {
     constructor(deaths = 0, level = 1){
         this.deaths = deaths
         this.level = level
-        this.levelCount = 2
+        this.levelCount = 4
         this.food = []
     }
 
@@ -31,6 +31,11 @@ export default class Match {
                 for (let x=0; x<6; x++) enemies.push(new Enemy(140+x*80,20))
                 for (let x=0; x<6; x++) enemies.push(new Enemy(180+x*80,board.h-20))
                 break
+            case 3:
+                for (let x=0; x<3; x++) enemies.push(new Enemy(60+x*48,60))
+                for (let y=0; y<3; y++) enemies.push(new Enemy(180,100+y*48))
+                for (let x=0; x<3; x++) enemies.push(new Enemy(140-x*48,220))
+                for (let y=0; y<2; y++) enemies.push(new Enemy(20,180-y*48))
         }
 
         // movement type
@@ -46,6 +51,24 @@ export default class Match {
                     e.addTarget([e.x, board.h-e.y])
                     e.addTarget([e.x, e.y])
                 })
+                break
+            case 3:
+                enemies.forEach((e,i) => {
+                    e.addTarget([100, 60])
+                    e.addTarget([160, 60])
+                    e.addTarget([180, 100])
+                    e.addTarget([180, 140])
+                    e.addTarget([180, 200])
+                    e.addTarget([140, 220])
+                    e.addTarget([100, 220])
+                    e.addTarget([40, 220])
+                    e.addTarget([20, 180])
+                    e.addTarget([20, 140])
+                    e.addTarget([20, 80])
+                    e.addTarget([60, 60])
+                    e.currentMov = i
+                })
+                break
         }
 
         return enemies
@@ -58,6 +81,9 @@ export default class Match {
             case 2:
                 this.food.push(new Food(board.w/2,board.h/2))
                 break
+            case 3:
+                this.food.push(new Food(20,20))
+                break
         }
     }
 
@@ -65,6 +91,8 @@ export default class Match {
         switch(this.level){
             case 2:
                 return [9,89]
+            case 3:
+                return [89,129]
             default:
                 return [9,9]
         }

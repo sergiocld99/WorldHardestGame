@@ -27,9 +27,9 @@ const deathTv = document.getElementById("deaths") as HTMLParagraphElement
 const levelTv = document.getElementById("level") as HTMLParagraphElement
 
 // objects
-const match = new Match(0,1)
+const match = new Match(0,3)
 const board = new Board(canvas.width, canvas.height)
-board.build(match.level)
+board.build(match.level, canvas)
 
 // entities
 const player = new Player(match.getPlayerStartPos(), 25, board)
@@ -66,7 +66,7 @@ setInterval(() => {
         let target = board.translate([player.x, player.y])
         if (board.getCellType(target) === CellType.END){
             match.nextLevel()
-            board.build(match.level)
+            board.build(match.level, canvas)
 
             // build entities
             player.setPosition(match.getPlayerStartPos())
