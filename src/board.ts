@@ -28,10 +28,24 @@ export default class Board {
     // ---- CONSTRUCTION -----------------
 
     build(level: number, canvas: HTMLCanvasElement) {
+        // define rows and cols
+        switch(level){
+            case 3:
+                this.cols = 5
+                break
+            case 4:
+                this.rows = 14
+                this.cols = 14
+                break
+        }
+        
         this.matrix = Array.from({length: this.rows}, () => {
             return Array(this.cols).fill(CellType.DEFAULT)
         })
 
+        this.updateDimen(canvas)
+
+        // place areas
         switch(level){
             case 1:
                 this.placeArea(0,0,3,this.rows,CellType.GREEN)
@@ -46,10 +60,22 @@ export default class Board {
                 this.placeArea(4,0,3,2,CellType.EMPTY,true)
                 break
             case 3:
-                this.cols = 5
-                this.updateDimen(canvas)
                 this.placeRow(0,1,5,CellType.EMPTY)
                 this.placeArea(2,1,3,3,CellType.END)
+                break
+            case 4:
+                this.placeArea(0,0,6,3,CellType.EMPTY,true)
+                this.placeArea(0,6,2,3,CellType.GREEN)
+                this.placeArea(0,8,6,3,CellType.EMPTY,true)
+                this.placeArea(3,0,3,3,CellType.EMPTY,true)
+                this.placeArea(6,0,3,2,CellType.END)
+                this.placeArea(6,11,3,2,CellType.EMPTY)
+                this.placeArea(8,0,3,3,CellType.EMPTY,true)
+                this.placeArea(11,6,2,3,CellType.EMPTY)
+                this.placeArea(3,3,2,1,CellType.EMPTY,true)
+                this.placeArea(3,9,2,1,CellType.EMPTY,true)
+                this.placeArea(4,3,1,1,CellType.EMPTY,true)
+                this.placeArea(4,10,1,1,CellType.EMPTY,true)
                 break
         }
     }

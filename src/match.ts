@@ -1,6 +1,7 @@
 import Board from "./board.js"
 import Enemy from "./entity/enemy.js"
 import Food from "./entity/food.js"
+import RadianEnemy from "./entity/radianEnemy.js"
 import Position from "./position.js"
 
 export default class Match {
@@ -12,12 +13,13 @@ export default class Match {
     constructor(deaths = 0, level = 1){
         this.deaths = deaths
         this.level = level
-        this.levelCount = 4
+        this.levelCount = 30
         this.food = []
     }
 
     buildEnemies(board: Board): Enemy[] {
         let enemies: Enemy[] = []
+        let centre: Position
 
         // start position
         switch(this.level){
@@ -36,6 +38,12 @@ export default class Match {
                 for (let y=0; y<3; y++) enemies.push(new Enemy(180,100+y*48))
                 for (let x=0; x<3; x++) enemies.push(new Enemy(140-x*48,220))
                 for (let y=0; y<2; y++) enemies.push(new Enemy(20,180-y*48))
+                break
+            case 4:
+                centre = [board.w/2, board.h/2]
+                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(board.w/2, board.h/2-i*28, centre))
+                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(board.w/2-i*28, board.h/2, centre))
+                break
         }
 
         // movement type
@@ -84,6 +92,11 @@ export default class Match {
             case 3:
                 this.food.push(new Food(20,20))
                 break
+            case 4:
+                this.food.push(new Food(board.w/2,160))
+                this.food.push(new Food(board.w-160,board.h/2))
+                this.food.push(new Food(board.w/2,board.h-160))
+                break
         }
     }
 
@@ -93,6 +106,8 @@ export default class Match {
                 return [9,89]
             case 3:
                 return [89,129]
+            case 4:
+                return [249,9]
             default:
                 return [9,9]
         }

@@ -27,7 +27,7 @@ const deathTv = document.getElementById("deaths") as HTMLParagraphElement
 const levelTv = document.getElementById("level") as HTMLParagraphElement
 
 // objects
-const match = new Match(0,3)
+const match = new Match(0,1)
 const board = new Board(canvas.width, canvas.height)
 board.build(match.level, canvas)
 
