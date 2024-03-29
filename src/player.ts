@@ -8,10 +8,15 @@ export default class Player extends Entity {
     size: number
     board: Board
 
-    constructor(x: number, y: number, size: number, board: Board){
-        super(x,y,3)
+    constructor(startPos: Position, size: number, board: Board){
+        super(startPos[0], startPos[1], 3)
         this.size = size
         this.board = board
+    }
+
+    setPosition(pos: Position){
+        this.x = pos[0]
+        this.y = pos[1]
     }
 
     move(dir: Direction){
@@ -60,16 +65,16 @@ export default class Player extends Entity {
             return
         }
 
-        // check if reached end
-        const end = corners.filter(c => {
-            let target = this.board.translate(c)
-            return this.board.getCellType(target) === CellType.END
-        })
+        // // check if reached end
+        // const end = corners.filter(c => {
+        //     let target = this.board.translate(c)
+        //     return this.board.getCellType(target) === CellType.END
+        // })
 
-        if (end.length){
-            this.x = 0
-            this.y = 0
-        }
+        // if (end.length){
+        //     this.x = 0
+        //     this.y = 0
+        // }
     }
 
     draw(ctx: CanvasRenderingContext2D){

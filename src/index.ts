@@ -1,4 +1,5 @@
 import Board from "./board.js"
+import CellType from "./cellType.js"
 import Direction from "./direction.js"
 import Enemy from "./enemy.js"
 import Match from "./match.js"
@@ -26,21 +27,13 @@ const deathTv = document.getElementById("deaths") as HTMLParagraphElement
 const levelTv = document.getElementById("level") as HTMLParagraphElement
 
 // objects
+const match = new Match(0,1)
 const board = new Board(canvas.width, canvas.height)
-const player = new Player(0,0,25,board)
-const enemies: Enemy[] = []
-const match = new Match()
+board.build(match.level)
 
-board.build()
-enemies.push(new Enemy(180, 60, 12))
-enemies.push(new Enemy(board.w-180, 100, 12))
-enemies.push(new Enemy(180, 140, 12))
-enemies.push(new Enemy(board.w-180, 180, 12))
-
-enemies.forEach(e => {
-    e.addTarget([board.w-e.x, e.y])
-    e.addTarget([e.x, e.y])
-})
+// entities
+const player = new Player(match.getPlayerStartPos(), 25, board)
+let enemies: Enemy[] = match.buildEnemies(board)
 
 // keyboard listener
 // keydown: press, keyup: release
@@ -66,11 +59,19 @@ setInterval(() => {
 
     enemies.forEach(e => e.moveAuto())
 
+    // check if player reached end
+    let target = board.translate([player.x, player.y])
+    if (board.getCellType(target) === CellType.END){
+        match.nextLevel()
+        board.build(match.level)
+        player.setPosition(match.getPlayerStartPos())
+        enemies = match.buildEnemies(board)
+    }
+
     // check collision
     enemies.forEach(e => {
         if (e.touchesCube(player)){
-            player.x = 0
-            player.y = 0
+            player.setPosition(match.getPlayerStartPos())
             match.deaths++
             deathTv.innerText = "Deaths: " + match.deaths
         }

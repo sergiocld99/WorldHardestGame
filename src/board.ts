@@ -15,23 +15,37 @@ export default class Board {
         this.cellSize = 40
         this.rows = h / this.cellSize
         this.cols = w / this.cellSize
-        this.matrix = Array.from({length: this.rows}, () => {
-            return Array(this.cols).fill(CellType.DEFAULT)
-        })
+        this.matrix = []
     }
 
     // ---- CONSTRUCTION -----------------
 
-    build() {
-        // green areas
-        for (let y=0; y<this.rows; y++){
-            this.placeRow(y,0,3,CellType.GREEN)
-            this.placeRow(y,this.cols-3,this.cols,CellType.END)
-        }
+    build(level: number) {
+        this.matrix = Array.from({length: this.rows}, () => {
+            return Array(this.cols).fill(CellType.DEFAULT)
+        })
 
-        // empty
-        this.placeRowAndMirror(0,3,this.cols-5,CellType.EMPTY)
-        this.placeColAndMirror(3,1,this.rows-1,CellType.EMPTY)
+        switch(level){
+            case 1:
+                this.placeArea(0,0,3,this.rows,CellType.GREEN)
+                this.placeArea(0,this.cols-3,3,this.rows,CellType.END)
+                this.placeRowAndMirror(0,3,this.cols-5,CellType.EMPTY)
+                this.placeColAndMirror(3,1,this.rows-1,CellType.EMPTY)
+                break
+            case 2:
+                this.placeArea(0,0,3,2,CellType.EMPTY,true)
+                this.placeArea(2,0,3,2,CellType.GREEN)
+                this.placeArea(2,this.cols-3,3,2,CellType.END)
+                this.placeArea(4,0,3,2,CellType.EMPTY,true)
+                break
+        }
+    }
+
+    placeArea(r0: number, c0: number, w: number, h: number, type: CellType, mirror = false){
+        for (let r=r0; r<r0+h; r++){
+            if (mirror) this.placeRowAndMirror(r,c0,c0+w,type)
+            else this.placeRow(r,c0,c0+w,type)
+        }
     }
 
     placeRow(row: number, x0: number, x1: number, type: CellType){
