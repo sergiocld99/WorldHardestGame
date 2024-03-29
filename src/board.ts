@@ -11,7 +11,7 @@ export default class Board {
     constructor(w: number, h: number){
         this.w = w
         this.h = h
-        this.cellSize = 25
+        this.cellSize = 50
         this.rows = h / this.cellSize
         this.cols = w / this.cellSize
         this.matrix = Array.from({length: this.rows}, () => {
@@ -45,7 +45,8 @@ export default class Board {
 
                 switch(value){
                     case CellType.DEFAULT:
-                        this.drawCell(x,y,"white",ctx)
+                        let even = (x+y) % 2 === 0
+                        this.drawCell(x,y,even ? "white" : "lightgray",ctx)
                         break
                     case CellType.GREEN:
                         this.drawCell(x,y,"lightgreen",ctx)
