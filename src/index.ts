@@ -4,14 +4,7 @@ import Direction from "./direction.js"
 import Enemy from "./entity/enemy.js"
 import Match from "./match.js"
 import Player from "./entity/player.js"
-
-function playMusicLoop(){
-    const music = new Audio("music.mp3")
-    music.loop = true
-    music.play()
-
-    // duration is 4 minutes, 6 seconds
-}
+import { playMusicLoop, playSound } from "./sfx.js"
 
 function returnDirection(key: string): Direction | null {
     if (key === "ArrowUp" || key === 'w') return Direction.UP
@@ -78,6 +71,7 @@ setInterval(() => {
     // check collision
     enemies.forEach(e => {
         if (e.touchesCube(player)){
+            playSound("punch")
             player.setPosition(match.getPlayerStartPos())
             match.die()
             deathTv.innerText = "Deaths: " + match.deaths
