@@ -1,5 +1,7 @@
 import Board from "./board.js"
 import Direction from "./direction.js"
+import Enemy from "./enemy.js"
+import Movement from "./movement.js"
 import Player from "./player.js"
 
 function playMusicLoop(){
@@ -23,7 +25,18 @@ const canvasCtx = canvas.getContext("2d")!
 
 // objects
 const board = new Board(canvas.width, canvas.height)
-const player = new Player(0,0,20,board)
+const player = new Player(0,0,25,board)
+const enemies: Enemy[] = []
+
+board.build()
+enemies.push(new Enemy(20, 175, 12))
+enemies.push(new Enemy(board.w-20, 225, 12))
+enemies.push(new Enemy(20, 275, 12))
+enemies.push(new Enemy(board.w-20, 325, 12))
+
+enemies.forEach((e,i) => {
+    e.addMovementAndBackwards(new Movement([e.x, e.y], [board.w-e.x, e.y]))
+})
 
 // keyboard listener
 // keydown: press, keyup: release
@@ -47,7 +60,12 @@ setInterval(() => {
         if (isDirPressed) player.move(index)
     })
 
+    enemies.forEach(e => e.moveAuto())
+
+    board.draw(canvasCtx)
     player.draw(canvasCtx)
+
+    enemies.forEach(e => e.draw(canvasCtx))
 }, 20)
 
 playMusicLoop()
