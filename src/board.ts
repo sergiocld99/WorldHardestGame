@@ -65,6 +65,11 @@ export default class Board {
         return this.matrix[y][x] === CellType.EMPTY
     }
 
+    getCellType(pos: Position){
+        let x = pos[0], y = pos[1]
+        return this.matrix[y][x]
+    }
+
     translate(entityCoords: Position): Position {
         const x = Math.floor(entityCoords[0] / this.cellSize)
         const y = Math.floor(entityCoords[1] / this.cellSize)
@@ -88,6 +93,7 @@ export default class Board {
                         this.drawCell(x,y,"lightgreen",ctx)
                         break
                     case CellType.EMPTY:
+                        this.drawEmptyCell(x,y,ctx)
                         break
                 }
             }
@@ -97,5 +103,47 @@ export default class Board {
     drawCell(x: number, y:number, color: string, ctx: CanvasRenderingContext2D){
         ctx.fillStyle = color
         ctx.fillRect(x*this.cellSize,y*this.cellSize,this.cellSize,this.cellSize)
+
+        // outside edges
+        ctx.lineWidth = 5
+
+        if (y === 0) this.drawLine(x,x+1,y,y,ctx)
+        else if (y === this.rows-1) this.drawLine(x,x+1,y+1,y+1,ctx)
+
+        if (x === 0) this.drawLine(x,x,y,y+1,ctx)
+        else if (x === this.cols-1) this.drawLine(x+1,x+1,y,y+1,ctx)
+    }
+
+    drawEmptyCell(x: number, y: number, ctx: CanvasRenderingContext2D){
+        // top border
+        if (!this.isEmpty([x,y-1])){
+            ctx.lineWidth = 2.5
+            this.drawLine(x,x+1,y,y,ctx)
+        }
+
+        // bottom border
+        if (!this.isEmpty([x,y+1])){
+            ctx.lineWidth = 5
+            this.drawLine(x,x+1,y+1,y+1,ctx)
+        }
+
+        // left border
+        if (!this.isEmpty([x-1, y])){
+            ctx.lineWidth = 2.5
+            this.drawLine(x,x,y,y+1,ctx)
+        }
+
+        // right border
+        if (!this.isEmpty([x+1,y])){
+            ctx.lineWidth = 5
+            this.drawLine(x+1,x+1,y,y+1,ctx)
+        }
+    }
+
+    drawLine(x0: number, x1: number, y0: number, y1: number, ctx: CanvasRenderingContext2D){
+        ctx.beginPath()
+        ctx.moveTo(x0*this.cellSize, y0*this.cellSize)
+        ctx.lineTo(x1*this.cellSize, y1*this.cellSize)
+        ctx.stroke()
     }
 }

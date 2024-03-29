@@ -15,8 +15,6 @@ export default class Player extends Entity {
     }
 
     move(dir: Direction){
-        let target
-
         // attempt
         switch (dir) {
             case Direction.UP:
@@ -34,31 +32,50 @@ export default class Player extends Entity {
         }
 
         // validate position
-        const outside = this.getCorners().filter(c => {
-            target = this.board.translate(c)
+        const corners = this.getCorners()
+
+        const outside = corners.filter(c => {
+            let target = this.board.translate(c)
             return this.board.isEmpty(target)
         })
 
         // rollback if it's illegal
-        if (outside.length) switch(dir){
-            case Direction.UP:
-                this.y += this.speed
-                break;
-            case Direction.DOWN:
-                this.y -= this.speed
-                break
-            case Direction.LEFT:
-                this.x += this.speed
-                break
-            case Direction.RIGHT:
-                this.x -= this.speed
-                break
+        if (outside.length) {
+            switch(dir){
+                case Direction.UP:
+                    this.y += this.speed
+                    break;
+                case Direction.DOWN:
+                    this.y -= this.speed
+                    break
+                case Direction.LEFT:
+                    this.x += this.speed
+                    break
+                case Direction.RIGHT:
+                    this.x -= this.speed
+                    break
+            }
+
+            // return bc it didn't move
+            return
+        }
+
+        // check if reached end
+        const end = corners.filter(c => {
+            let target = this.board.translate(c)
+            return this.board.getCellType(target) === CellType.END
+        })
+
+        if (end.length){
+            this.x = 0
+            this.y = 0
         }
     }
 
     draw(ctx: CanvasRenderingContext2D){
         ctx.strokeStyle = "black"
         ctx.fillStyle = "red"
+        ctx.lineWidth = 2.5
 
         ctx.fillRect(this.x,this.y,this.size,this.size)
         ctx.strokeRect(this.x,this.y,this.size,this.size)
