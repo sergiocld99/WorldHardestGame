@@ -1,3 +1,4 @@
+import Board from "./board.js"
 import Direction from "./direction.js"
 import Player from "./player.js"
 
@@ -19,7 +20,10 @@ function returnDirection(key: string): Direction | null {
 
 const canvas = document.querySelector("canvas")!
 const canvasCtx = canvas.getContext("2d")!
-const player = new Player(0,0,20)
+
+// objects
+const board = new Board(canvas.width, canvas.height)
+const player = new Player(0,0,20,board)
 
 // keyboard listener
 // keydown: press, keyup: release
