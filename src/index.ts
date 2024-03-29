@@ -1,9 +1,9 @@
 import Board from "./board.js"
 import CellType from "./cellType.js"
 import Direction from "./direction.js"
-import Enemy from "./enemy.js"
+import Enemy from "./entity/enemy.js"
 import Match from "./match.js"
-import Player from "./player.js"
+import Player from "./entity/player.js"
 
 function playMusicLoop(){
     const music = new Audio("music.mp3")
@@ -34,6 +34,7 @@ board.build(match.level)
 // entities
 const player = new Player(match.getPlayerStartPos(), 25, board)
 let enemies: Enemy[] = match.buildEnemies(board)
+match.buildFood(board)
 
 // keyboard listener
 // keydown: press, keyup: release
@@ -60,26 +61,40 @@ setInterval(() => {
     enemies.forEach(e => e.moveAuto())
 
     // check if player reached end
-    let target = board.translate([player.x, player.y])
-    if (board.getCellType(target) === CellType.END){
-        match.nextLevel()
-        board.build(match.level)
-        player.setPosition(match.getPlayerStartPos())
-        enemies = match.buildEnemies(board)
+    // condition: food count = 0
+    if (match.food.filter(f => !f.taken).length === 0){
+        let target = board.translate([player.x, player.y])
+        if (board.getCellType(target) === CellType.END){
+            match.nextLevel()
+            board.build(match.level)
+
+            // build entities
+            player.setPosition(match.getPlayerStartPos())
+            enemies = match.buildEnemies(board)
+            match.buildFood(board)
+        }
     }
 
     // check collision
     enemies.forEach(e => {
         if (e.touchesCube(player)){
             player.setPosition(match.getPlayerStartPos())
-            match.deaths++
+            match.die()
             deathTv.innerText = "Deaths: " + match.deaths
+        }
+    })
+
+    // check if food eaten
+    match.food.forEach(f => {
+        if (f.touchesCube(player)){
+            f.taken = true
         }
     })
 
     board.draw(canvasCtx)
     player.draw(canvasCtx)
     enemies.forEach(e => e.draw(canvasCtx))
+    match.food.forEach(f => f.draw(canvasCtx))
 
     // html p update
     levelTv.innerText = match.level + "/" + match.levelCount

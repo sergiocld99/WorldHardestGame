@@ -1,16 +1,13 @@
-import Board from "./board.js"
-import CellType from "./cellType.js"
-import Direction from "./direction.js"
+import Board from "../board.js"
+import Direction from "../direction.js"
 import Entity from "./entity.js"
-import Position from "./position.js"
+import Position from "../position.js"
 
 export default class Player extends Entity {
-    size: number
     board: Board
 
     constructor(startPos: Position, size: number, board: Board){
-        super(startPos[0], startPos[1], 3)
-        this.size = size
+        super(startPos[0], startPos[1], 3, size)
         this.board = board
     }
 
@@ -97,6 +94,22 @@ export default class Player extends Entity {
 
         return [
             [x0,y0], [x0,y1], [x1,y0], [x1,y1]
+        ]
+    }
+
+    getMainPoints(): Position[] {
+        const x0 = this.x
+        const y0 = this.y
+
+        const x1 = this.x + this.size
+        const y1 = this.y + this.size
+        
+        const xm = (x1+x0) / 2
+        const ym = (y1+y0) / 2
+
+        return [
+            [x0,y0], [x0,y1], [x1,y0], [x1,y1],
+            [xm,y0], [xm,y1], [x0,ym], [x1,ym]
         ]
     }
 }

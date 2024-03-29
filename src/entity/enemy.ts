@@ -1,16 +1,12 @@
-import Entity from "./entity.js";
-import Player from "./player.js";
-import Position from "./position.js";
-import { distance } from "./utils.js";
+import Position from "../position.js";
+import CircleEntity from "./circleEntity.js";
 
-export default class Enemy extends Entity {
-    size: number
+export default class Enemy extends CircleEntity {
     currentMov: number
     targets: Position[]
 
-    constructor(x: number, y: number, size: number){
-        super(x,y,4)
-        this.size = size
+    constructor(x: number, y: number, size = 10){
+        super(x,y,4,size)
         this.currentMov = 0
         this.targets = []
     }
@@ -40,19 +36,6 @@ export default class Enemy extends Entity {
             if (this.y < y1) this.y += this.speed
             else this.y -= this.speed
         }
-    }
-
-    touchesCube(player: Player): boolean {
-        // (x,y) of enemy is its centre
-        const centre: Position = [this.x, this.y]
-
-        // (x,y) of player is its top-left corner
-        const inside = player.getCorners().filter(c => {
-            let r = distance(c, centre)
-            return r < this.size
-        })
-
-        return inside.length > 0
     }
     
     draw(ctx: CanvasRenderingContext2D){

@@ -1,16 +1,19 @@
 import Board from "./board.js"
-import Enemy from "./enemy.js"
+import Enemy from "./entity/enemy.js"
+import Food from "./entity/food.js"
 import Position from "./position.js"
 
 export default class Match {
     deaths: number
     level: number
     levelCount: number
+    food: Food[]
 
     constructor(deaths = 0, level = 1){
         this.deaths = deaths
         this.level = level
         this.levelCount = 2
+        this.food = []
     }
 
     buildEnemies(board: Board): Enemy[] {
@@ -19,14 +22,14 @@ export default class Match {
         // start position
         switch(this.level){
             case 1:
-                enemies.push(new Enemy(180, 60, 10))
-                enemies.push(new Enemy(180, 140, 10))
-                enemies.push(new Enemy(board.w-180, 100, 10))
-                enemies.push(new Enemy(board.w-180, 180, 10))
+                enemies.push(new Enemy(180, 60))
+                enemies.push(new Enemy(180, 140))
+                enemies.push(new Enemy(board.w-180, 100))
+                enemies.push(new Enemy(board.w-180, 180))
                 break
             case 2:
-                for (let x=0; x<6; x++) enemies.push(new Enemy(140+x*80,20,10))
-                for (let x=0; x<6; x++) enemies.push(new Enemy(180+x*80,board.h-20,10))
+                for (let x=0; x<6; x++) enemies.push(new Enemy(140+x*80,20))
+                for (let x=0; x<6; x++) enemies.push(new Enemy(180+x*80,board.h-20))
                 break
         }
 
@@ -48,6 +51,16 @@ export default class Match {
         return enemies
     }
 
+    buildFood(board: Board) {
+        this.food = []
+
+        switch(this.level){
+            case 2:
+                this.food.push(new Food(board.w/2,board.h/2))
+                break
+        }
+    }
+
     getPlayerStartPos(): Position {
         switch(this.level){
             case 2:
@@ -61,5 +74,10 @@ export default class Match {
         if (this.level < this.levelCount){
             this.level++
         }
+    }
+
+    die(){
+        this.deaths++
+        this.food.forEach(f => f.taken = false)
     }
 }
