@@ -23,6 +23,7 @@ function returnDirection(key: string): Direction | null {
 const canvas = document.querySelector("canvas")!
 const canvasCtx = canvas.getContext("2d")!
 const deathTv = document.getElementById("deaths") as HTMLParagraphElement
+const levelTv = document.getElementById("level") as HTMLParagraphElement
 
 // objects
 const board = new Board(canvas.width, canvas.height)
@@ -77,8 +78,10 @@ setInterval(() => {
 
     board.draw(canvasCtx)
     player.draw(canvasCtx)
-
     enemies.forEach(e => e.draw(canvasCtx))
+
+    // html p update
+    levelTv.innerText = match.level + "/" + match.levelCount
 }, 20)
 
 playMusicLoop()

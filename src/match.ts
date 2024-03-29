@@ -1,7 +1,11 @@
 export default class Match {
     deaths: number
+    level: number
+    levelCount: number
 
-    constructor(){
-        this.deaths = 0
+    constructor(deaths = 0, level = 1){
+        this.deaths = deaths
+        this.level = level
+        this.levelCount = 1
     }
 }
