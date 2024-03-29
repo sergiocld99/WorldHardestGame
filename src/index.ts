@@ -28,10 +28,10 @@ const player = new Player(0,0,25,board)
 const enemies: Enemy[] = []
 
 board.build()
-enemies.push(new Enemy(20, 175, 12))
-enemies.push(new Enemy(board.w-20, 225, 12))
-enemies.push(new Enemy(20, 275, 12))
-enemies.push(new Enemy(board.w-20, 325, 12))
+enemies.push(new Enemy(180, 60, 12))
+enemies.push(new Enemy(board.w-180, 100, 12))
+enemies.push(new Enemy(180, 140, 12))
+enemies.push(new Enemy(board.w-180, 180, 12))
 
 enemies.forEach(e => {
     e.addTarget([board.w-e.x, e.y])

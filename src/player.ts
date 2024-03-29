@@ -14,18 +14,28 @@ export default class Player extends Entity {
     }
 
     move(dir: Direction){
+        let target
+        
         switch (dir) {
             case Direction.UP:
-                if (this.y >= this.speed) this.y -= this.speed
+                target = this.board.translate([this.x, this.y-this.speed])
+                if (this.board.isEmpty(target)) return
+                this.y -= this.speed
                 break;
             case Direction.DOWN:
-                if (this.y <= this.board.h - this.size - this.speed) this.y += this.speed
+                target = this.board.translate([this.x, this.y+this.speed+this.size])
+                if (this.board.isEmpty(target)) return
+                this.y += this.speed
                 break
             case Direction.LEFT:
-                if (this.x >= this.speed) this.x -= this.speed
+                target = this.board.translate([this.x-this.speed, this.y])
+                if (this.board.isEmpty(target)) return
+                this.x -= this.speed
                 break
             case Direction.RIGHT:
-                if (this.x <= this.board.w - this.size - this.speed) this.x += this.speed
+                target = this.board.translate([this.x+this.speed+this.size, this.y])
+                if (this.board.isEmpty(target)) return
+                this.x += this.speed
                 break
         }
     }
