@@ -55,10 +55,11 @@ setInterval(() => {
 
     // check if player reached end
     // condition: food count = 0
-    if (match.food.filter(f => !f.taken).length === 0){
+    if (match.getUntakenFood().length === 0){
         let target = board.translate([player.x, player.y])
         if (board.getCellType(target) === CellType.END){
             match.nextLevel()
+            playSound("nextLevel")
             board.build(match.level, canvas)
 
             // build entities
@@ -79,8 +80,9 @@ setInterval(() => {
     })
 
     // check if food eaten
-    match.food.forEach(f => {
+    match.getUntakenFood().forEach(f => {
         if (f.touchesCube(player)){
+            playSound("food")
             f.taken = true
         }
     })

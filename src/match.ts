@@ -113,6 +113,10 @@ export default class Match {
         }
     }
 
+    getUntakenFood(): Food[]{
+        return this.food.filter(f => !f.taken)
+    }
+
     nextLevel(){
         if (this.level < this.levelCount){
             this.level++
