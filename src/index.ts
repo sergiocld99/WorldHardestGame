@@ -1,7 +1,6 @@
 import Board from "./board.js"
 import Direction from "./direction.js"
 import Enemy from "./enemy.js"
-import Movement from "./movement.js"
 import Player from "./player.js"
 
 function playMusicLoop(){
@@ -34,8 +33,9 @@ enemies.push(new Enemy(board.w-20, 225, 12))
 enemies.push(new Enemy(20, 275, 12))
 enemies.push(new Enemy(board.w-20, 325, 12))
 
-enemies.forEach((e,i) => {
-    e.addMovementAndBackwards(new Movement([e.x, e.y], [board.w-e.x, e.y]))
+enemies.forEach(e => {
+    e.addTarget([board.w-e.x, e.y])
+    e.addTarget([e.x, e.y])
 })
 
 // keyboard listener
@@ -61,6 +61,14 @@ setInterval(() => {
     })
 
     enemies.forEach(e => e.moveAuto())
+
+    // check collision
+    enemies.forEach(e => {
+        if (e.touchesCube(player)){
+            player.x = 0
+            player.y = 0
+        }
+    })
 
     board.draw(canvasCtx)
     player.draw(canvasCtx)
