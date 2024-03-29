@@ -1,4 +1,5 @@
 import Board from "./board.js"
+import CellType from "./cellType.js"
 import Direction from "./direction.js"
 import Entity from "./entity.js"
 import Position from "./position.js"
@@ -15,27 +16,42 @@ export default class Player extends Entity {
 
     move(dir: Direction){
         let target
-        
+
+        // attempt
         switch (dir) {
             case Direction.UP:
-                target = this.board.translate([this.x, this.y-this.speed])
-                if (this.board.isEmpty(target)) return
                 this.y -= this.speed
                 break;
             case Direction.DOWN:
-                target = this.board.translate([this.x, this.y+this.speed+this.size])
-                if (this.board.isEmpty(target)) return
                 this.y += this.speed
                 break
             case Direction.LEFT:
-                target = this.board.translate([this.x-this.speed, this.y])
-                if (this.board.isEmpty(target)) return
                 this.x -= this.speed
                 break
             case Direction.RIGHT:
-                target = this.board.translate([this.x+this.speed+this.size, this.y])
-                if (this.board.isEmpty(target)) return
                 this.x += this.speed
+                break
+        }
+
+        // validate position
+        const outside = this.getCorners().filter(c => {
+            target = this.board.translate(c)
+            return this.board.isEmpty(target)
+        })
+
+        // rollback if it's illegal
+        if (outside.length) switch(dir){
+            case Direction.UP:
+                this.y += this.speed
+                break;
+            case Direction.DOWN:
+                this.y -= this.speed
+                break
+            case Direction.LEFT:
+                this.x += this.speed
+                break
+            case Direction.RIGHT:
+                this.x -= this.speed
                 break
         }
     }

@@ -25,7 +25,8 @@ export default class Board {
     build() {
         // green areas
         for (let y=0; y<this.rows; y++){
-            this.placeRowAndMirror(y,0,3,CellType.GREEN)
+            this.placeRow(y,0,3,CellType.GREEN)
+            this.placeRow(y,this.cols-3,this.cols,CellType.END)
         }
 
         // empty
@@ -33,24 +34,26 @@ export default class Board {
         this.placeColAndMirror(3,1,this.rows-1,CellType.EMPTY)
     }
 
-    placeRowAndMirror(row: number, x0: number, x1: number, type: CellType){
+    placeRow(row: number, x0: number, x1: number, type: CellType){
         for (let x=x0; x<x1; x++){
             this.matrix[row][x] = type
         }
-
-        for (let x=this.cols-x1; x<this.cols-x0; x++){
-            this.matrix[this.rows-row-1][x] = type
-        }
     }
 
-    placeColAndMirror(col: number, y0: number, y1: number, type: CellType){
+    placeColumn(col: number, y0: number, y1: number, type: CellType){
         for (let y=y0; y<y1; y++){
             this.matrix[y][col] = type
         }
+    }
 
-        for (let y=this.rows-y1; y<this.rows-y0; y++){
-            this.matrix[y][this.cols-col-1] = type
-        }
+    placeRowAndMirror(row: number, x0: number, x1: number, type: CellType){
+        this.placeRow(row, x0, x1, type)
+        this.placeRow(this.rows-row-1, this.cols-x1, this.cols-x0, type)
+    }
+
+    placeColAndMirror(col: number, y0: number, y1: number, type: CellType){
+        this.placeColumn(col, y0, y1, type)
+        this.placeColumn(this.cols-col-1, this.rows-y1, this.rows-y0, type)
     }
 
     // ---- QUERIES --------------------
@@ -81,6 +84,7 @@ export default class Board {
                         this.drawCell(x,y,even ? "white" : "lightgray",ctx)
                         break
                     case CellType.GREEN:
+                    case CellType.END:
                         this.drawCell(x,y,"lightgreen",ctx)
                         break
                     case CellType.EMPTY:
