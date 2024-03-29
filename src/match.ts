@@ -100,17 +100,9 @@ export default class Match {
         }
     }
 
-    getPlayerStartPos(): Position {
-        switch(this.level){
-            case 2:
-                return [9,89]
-            case 3:
-                return [89,129]
-            case 4:
-                return [249,9]
-            default:
-                return [9,9]
-        }
+    getPlayerStartPos(board: Board): Position {
+        const [col,row] = board.getSpawnCentre(0)
+        return [col*board.cellSize, row*board.cellSize]
     }
 
     getUntakenFood(): Food[]{

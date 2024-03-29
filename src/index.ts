@@ -25,7 +25,7 @@ const board = new Board(canvas.width, canvas.height)
 board.build(match.level, canvas)
 
 // entities
-const player = new Player(match.getPlayerStartPos(), 25, board)
+const player = new Player(match.getPlayerStartPos(board), 25)
 let enemies: Enemy[] = match.buildEnemies(board)
 match.buildFood(board)
 
@@ -48,42 +48,45 @@ setInterval(() => {
 
     // update position
     pressedKeys.forEach((isDirPressed, index) => {
-        if (isDirPressed) player.move(index)
+        if (isDirPressed) player.move(index, board)
     })
 
     enemies.forEach(e => e.moveAuto())
 
     // check if player reached end
     // condition: food count = 0
-    if (match.getUntakenFood().length === 0){
+    const untakedFood = match.getUntakenFood()
+
+    if (untakedFood.length === 0){
         let target = board.translate([player.x, player.y])
         if (board.getCellType(target) === CellType.END){
-            match.nextLevel()
             playSound("nextLevel")
+            match.nextLevel()
             board.build(match.level, canvas)
 
             // build entities
-            player.setPosition(match.getPlayerStartPos())
+            player.setSpawn(match.getPlayerStartPos(board))
+            player.reset()
             enemies = match.buildEnemies(board)
             match.buildFood(board)
         }
+    } else {
+        // check if food eaten
+        untakedFood.forEach(f => {
+            if (f.touchesCube(player)){
+                playSound("food")
+                f.taken = true
+            }
+        })
     }
 
     // check collision
     enemies.forEach(e => {
         if (e.touchesCube(player)){
             playSound("punch")
-            player.setPosition(match.getPlayerStartPos())
+            player.reset()
             match.die()
             deathTv.innerText = "Deaths: " + match.deaths
-        }
-    })
-
-    // check if food eaten
-    match.getUntakenFood().forEach(f => {
-        if (f.touchesCube(player)){
-            playSound("food")
-            f.taken = true
         }
     })
 

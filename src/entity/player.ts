@@ -4,19 +4,24 @@ import Entity from "./entity.js"
 import Position from "../position.js"
 
 export default class Player extends Entity {
-    board: Board
+    private spawnPos: Position
 
-    constructor(startPos: Position, size: number, board: Board){
-        super(startPos[0], startPos[1], 3, size)
-        this.board = board
+    constructor(spawnCentre: Position, size: number){
+        super(spawnCentre[0] - size/2, spawnCentre[1] - size/2, 3, size)
+        this.spawnPos = [this.x, this.y]
     }
 
-    setPosition(pos: Position){
-        this.x = pos[0]
-        this.y = pos[1]
+    reset(){
+        this.x = this.spawnPos[0]
+        this.y = this.spawnPos[1]
     }
 
-    move(dir: Direction){
+    setSpawn(centre: Position){
+        this.spawnPos[0] = centre[0] - this.size/2
+        this.spawnPos[1] = centre[1] - this.size/2
+    }
+
+    move(dir: Direction, board: Board){
         // attempt
         switch (dir) {
             case Direction.UP:
@@ -37,8 +42,8 @@ export default class Player extends Entity {
         const corners = this.getCorners()
 
         const outside = corners.filter(c => {
-            let target = this.board.translate(c)
-            return this.board.isEmpty(target)
+            let target = board.translate(c)
+            return board.isEmpty(target)
         })
 
         // rollback if it's illegal

@@ -1,5 +1,6 @@
 import CellType from "./cellType.js"
 import Position from "./position.js"
+import SpawnArea from "./spawnArea.js"
 
 export default class Board {
     w: number
@@ -8,6 +9,7 @@ export default class Board {
     rows: number
     cols: number
     matrix: CellType[][]
+    spawnAreas: SpawnArea[]
 
     constructor(w: number, h: number){
         this.w = w
@@ -16,6 +18,7 @@ export default class Board {
         this.rows = h / this.cellSize
         this.cols = w / this.cellSize
         this.matrix = []
+        this.spawnAreas = []
     }
 
     updateDimen(canvas: HTMLCanvasElement){
@@ -43,32 +46,33 @@ export default class Board {
             return Array(this.cols).fill(CellType.DEFAULT)
         })
 
+        this.spawnAreas = []
         this.updateDimen(canvas)
 
         // place areas
         switch(level){
             case 1:
-                this.placeArea(0,0,3,this.rows,CellType.GREEN)
-                this.placeArea(0,this.cols-3,3,this.rows,CellType.END)
+                this.spawnAreas.push(new SpawnArea(0,0,3,this.rows,0))
+                this.spawnAreas.push(new SpawnArea(0,this.cols-3,3,this.rows,1))
                 this.placeRowAndMirror(0,3,this.cols-5,CellType.EMPTY)
                 this.placeColAndMirror(3,1,this.rows-1,CellType.EMPTY)
                 break
             case 2:
+                this.spawnAreas.push(new SpawnArea(2,0,3,2,0))
+                this.spawnAreas.push(new SpawnArea(2,this.cols-3,3,2,1))
                 this.placeArea(0,0,3,2,CellType.EMPTY,true)
-                this.placeArea(2,0,3,2,CellType.GREEN)
-                this.placeArea(2,this.cols-3,3,2,CellType.END)
                 this.placeArea(4,0,3,2,CellType.EMPTY,true)
                 break
             case 3:
+                this.spawnAreas.push(new SpawnArea(2,1,3,3,0))
                 this.placeRow(0,1,5,CellType.EMPTY)
-                this.placeArea(2,1,3,3,CellType.END)
                 break
             case 4:
+                this.spawnAreas.push(new SpawnArea(0,6,2,3,0))
+                this.spawnAreas.push(new SpawnArea(6,0,3,2,1))
                 this.placeArea(0,0,6,3,CellType.EMPTY,true)
-                this.placeArea(0,6,2,3,CellType.GREEN)
                 this.placeArea(0,8,6,3,CellType.EMPTY,true)
                 this.placeArea(3,0,3,3,CellType.EMPTY,true)
-                this.placeArea(6,0,3,2,CellType.END)
                 this.placeArea(6,11,3,2,CellType.EMPTY)
                 this.placeArea(8,0,3,3,CellType.EMPTY,true)
                 this.placeArea(11,6,2,3,CellType.EMPTY)
@@ -78,6 +82,9 @@ export default class Board {
                 this.placeArea(4,10,1,1,CellType.EMPTY,true)
                 break
         }
+
+        // place spawn areas built in previous step
+        this.placeSpawnAreas()
     }
 
     placeArea(r0: number, c0: number, w: number, h: number, type: CellType, mirror = false){
@@ -85,6 +92,15 @@ export default class Board {
             if (mirror) this.placeRowAndMirror(r,c0,c0+w,type)
             else this.placeRow(r,c0,c0+w,type)
         }
+    }
+
+    placeSpawnAreas(){
+        this.spawnAreas.slice(0,-1).forEach(sp => {
+            this.placeArea(sp.r0, sp.c0, sp.w, sp.h, CellType.GREEN)
+        })
+
+        let sp = this.spawnAreas[this.spawnAreas.length-1]
+        this.placeArea(sp.r0, sp.c0, sp.w, sp.h, CellType.END) 
     }
 
     placeRow(row: number, x0: number, x1: number, type: CellType){
@@ -121,6 +137,11 @@ export default class Board {
     getCellType(pos: Position){
         let x = pos[0], y = pos[1]
         return this.matrix[y][x]
+    }
+
+    getSpawnCentre(index: number): Position {
+        let sp = this.spawnAreas[index]
+        return [sp.c0 + sp.w/2, sp.r0 + sp.h/2]
     }
 
     translate(entityCoords: Position): Position {
