@@ -1,6 +1,7 @@
 import Board from "./board.js"
 import Direction from "./direction.js"
 import Enemy from "./enemy.js"
+import Match from "./match.js"
 import Player from "./player.js"
 
 function playMusicLoop(){
@@ -21,11 +22,13 @@ function returnDirection(key: string): Direction | null {
 
 const canvas = document.querySelector("canvas")!
 const canvasCtx = canvas.getContext("2d")!
+const deathTv = document.getElementById("deaths") as HTMLParagraphElement
 
 // objects
 const board = new Board(canvas.width, canvas.height)
 const player = new Player(0,0,25,board)
 const enemies: Enemy[] = []
+const match = new Match()
 
 board.build()
 enemies.push(new Enemy(180, 60, 12))
@@ -67,6 +70,8 @@ setInterval(() => {
         if (e.touchesCube(player)){
             player.x = 0
             player.y = 0
+            match.deaths++
+            deathTv.innerText = "Deaths: " + match.deaths
         }
     })
 
