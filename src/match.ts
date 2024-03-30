@@ -20,6 +20,7 @@ export default class Match {
     buildEnemies(board: Board): Enemy[] {
         let enemies: Enemy[] = []
         let centre: Position
+        let delta
 
         // start position
         switch(this.level){
@@ -41,9 +42,18 @@ export default class Match {
                 break
             case 4:
                 centre = [board.w/2, board.h/2]
-                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(board.w/2, board.h/2-i*28, centre))
-                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(board.w/2-i*28, board.h/2, centre))
+                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(0, i*28, centre))
+                for (let i=-5; i<=5; i++) enemies.push(new RadianEnemy(i*28, 0, centre))
                 break
+            case 5:
+                centre = [board.w/2 + 20, board.h/2]
+                delta = 75
+                for (let i=-4; i<=-1; i++) enemies.push(new RadianEnemy(i*delta,0,centre))
+                for (let i=-4; i<=-1; i++) enemies.push(new RadianEnemy(0,i*delta,centre))
+                for (let i=1; i<=4; i++) enemies.push(new RadianEnemy(0, i*delta, centre))
+                for (let i=1; i<=4; i++) enemies.push(new RadianEnemy(i*delta,0,centre))
+                break
+
         }
 
         // movement type

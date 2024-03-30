@@ -40,6 +40,10 @@ export default class Board {
                 this.rows = 14
                 this.cols = 14
                 break
+            case 5:
+                this.rows = 16 // 10
+                this.cols = 17
+                break
         }
         
         this.matrix = Array.from({length: this.rows}, () => {
@@ -52,24 +56,24 @@ export default class Board {
         // place areas
         switch(level){
             case 1:
-                this.spawnAreas.push(new SpawnArea(0,0,3,this.rows,0))
-                this.spawnAreas.push(new SpawnArea(0,this.cols-3,3,this.rows,1))
+                this.addSpawnArea(0,0,3,this.rows)
+                this.addSpawnArea(0,this.cols-3,3,this.rows)
                 this.placeRowAndMirror(0,3,this.cols-5,CellType.EMPTY)
                 this.placeColAndMirror(3,1,this.rows-1,CellType.EMPTY)
                 break
             case 2:
-                this.spawnAreas.push(new SpawnArea(2,0,3,2,0))
-                this.spawnAreas.push(new SpawnArea(2,this.cols-3,3,2,1))
+                this.addSpawnArea(2,0,3,2)
+                this.addSpawnArea(2,this.cols-3,3,2)
                 this.placeArea(0,0,3,2,CellType.EMPTY,true)
                 this.placeArea(4,0,3,2,CellType.EMPTY,true)
                 break
             case 3:
-                this.spawnAreas.push(new SpawnArea(2,1,3,3,0))
-                this.placeRow(0,1,5,CellType.EMPTY)
+                this.addSpawnArea(2,1,3,3)
+                this.eraseRow(0,1,5)
                 break
             case 4:
-                this.spawnAreas.push(new SpawnArea(0,6,2,3,0))
-                this.spawnAreas.push(new SpawnArea(6,0,3,2,1))
+                this.addSpawnArea(0,6,2,3)
+                this.addSpawnArea(6,0,3,2)
                 this.placeArea(0,0,6,3,CellType.EMPTY,true)
                 this.placeArea(0,8,6,3,CellType.EMPTY,true)
                 this.placeArea(3,0,3,3,CellType.EMPTY,true)
@@ -81,10 +85,39 @@ export default class Board {
                 this.placeArea(4,3,1,1,CellType.EMPTY,true)
                 this.placeArea(4,10,1,1,CellType.EMPTY,true)
                 break
+            case 5:
+                this.placeArea(0,0,this.cols,3,CellType.EMPTY,true)
+                this.placeArea(6,0,2,this.rows-6,CellType.EMPTY)
+                this.addSpawnArea(3,0,2,1)
+                this.addSpawnArea(3,this.cols-1,1,1)
+                this.addSpawnArea(5,0,1,1)
+                this.addSpawnArea(7,11,1,2)
+                this.eraseRow(4,0,this.cols-2)
+                this.eraseRow(6,3,this.cols-4)
+                this.eraseRow(this.rows-5,3,this.cols-2)
+                this.eraseRow(this.rows-7,5,this.cols-4)
+                this.eraseColumn(this.cols-1,4,this.rows-3)
+                this.eraseColumn(this.cols-3,5,this.rows-4)
+                this.eraseColumn(this.cols-5,7,this.rows-7)
+                this.eraseColumn(3,7,this.rows-5)
+                this.matrix[8][5] = CellType.EMPTY
+                break
         }
 
         // place spawn areas built in previous step
         this.placeSpawnAreas()
+    }
+
+    addSpawnArea(r0: number, c0: number, w: number, h: number){
+        this.spawnAreas.push(new SpawnArea(r0,c0,w,h,this.spawnAreas.length))
+    }
+
+    eraseRow(row: number, x0: number, x1: number){
+        this.placeRow(row,x0,x1,CellType.EMPTY)
+    }
+
+    eraseColumn(col: number, y0: number, y1: number){
+        this.placeColumn(col,y0,y1,CellType.EMPTY)
     }
 
     placeArea(r0: number, c0: number, w: number, h: number, type: CellType, mirror = false){

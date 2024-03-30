@@ -1,5 +1,4 @@
 import Board from "./board.js"
-import CellType from "./cellType.js"
 import Direction from "./direction.js"
 import Enemy from "./entity/enemy.js"
 import Match from "./match.js"
@@ -18,9 +17,10 @@ const canvas = document.querySelector("canvas")!
 const canvasCtx = canvas.getContext("2d")!
 const deathTv = document.getElementById("deaths") as HTMLParagraphElement
 const levelTv = document.getElementById("level") as HTMLParagraphElement
+const LEVEL_START = 1
 
 // objects
-const match = new Match(0,1)
+const match = new Match(0, LEVEL_START)
 const board = new Board(canvas.width, canvas.height)
 board.build(match.level, canvas)
 
