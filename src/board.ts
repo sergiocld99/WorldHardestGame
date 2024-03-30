@@ -95,12 +95,9 @@ export default class Board {
     }
 
     placeSpawnAreas(){
-        this.spawnAreas.slice(0,-1).forEach(sp => {
+        this.spawnAreas.forEach(sp => {
             this.placeArea(sp.r0, sp.c0, sp.w, sp.h, CellType.GREEN)
         })
-
-        let sp = this.spawnAreas[this.spawnAreas.length-1]
-        this.placeArea(sp.r0, sp.c0, sp.w, sp.h, CellType.END) 
     }
 
     placeRow(row: number, x0: number, x1: number, type: CellType){
@@ -140,8 +137,7 @@ export default class Board {
     }
 
     getSpawnCentre(index: number): Position {
-        let sp = this.spawnAreas[index]
-        return [sp.c0 + sp.w/2, sp.r0 + sp.h/2]
+        return this.spawnAreas[index].getCentre()
     }
 
     translate(entityCoords: Position): Position {
@@ -163,7 +159,6 @@ export default class Board {
                         this.drawCell(x,y,even ? "white" : "lightgray",ctx)
                         break
                     case CellType.GREEN:
-                    case CellType.END:
                         this.drawCell(x,y,"lightgreen",ctx)
                         break
                     case CellType.EMPTY:

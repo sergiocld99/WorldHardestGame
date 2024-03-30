@@ -52,33 +52,43 @@ setInterval(() => {
     })
 
     enemies.forEach(e => e.moveAuto())
-
-    // check if player reached end
-    // condition: food count = 0
     const untakedFood = match.getUntakenFood()
 
-    if (untakedFood.length === 0){
-        let target = board.translate([player.x, player.y])
-        if (board.getCellType(target) === CellType.END){
-            playSound("nextLevel")
-            match.nextLevel()
-            board.build(match.level, canvas)
+    // check if reached new spawn area
+    const spawnTouching = board.spawnAreas.find(sp => {
+        return sp.contains(player.y/ board.cellSize, player.x / board.cellSize)
+    })
 
-            // build entities
-            player.setSpawn(match.getPlayerStartPos(board))
-            player.reset()
-            enemies = match.buildEnemies(board)
-            match.buildFood(board)
-        }
-    } else {
-        // check if food eaten
-        untakedFood.forEach(f => {
-            if (f.touchesCube(player)){
-                playSound("food")
-                f.taken = true
+    if (spawnTouching){
+        let centre = spawnTouching.getCentre()
+        centre[0] *= board.cellSize
+        centre[1] *= board.cellSize
+        player.setSpawn(centre)
+
+        // check if player reached end (last spawn area)
+        // condition: food count = 0
+        if (untakedFood.length === 0){
+            if (spawnTouching.id === board.spawnAreas.length-1){
+                playSound("nextLevel")
+                match.nextLevel()
+                board.build(match.level, canvas)
+    
+                // build entities
+                player.setSpawn(match.getPlayerStartPos(board))
+                player.reset()
+                enemies = match.buildEnemies(board)
+                match.buildFood(board)
             }
-        })
-    }
+        }
+    } 
+
+    // check if food eaten
+    untakedFood.forEach(f => {
+        if (f.touchesCube(player)){
+            playSound("food")
+            f.taken = true
+        }
+    })
 
     // check collision
     enemies.forEach(e => {

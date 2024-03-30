@@ -1,5 +1,5 @@
 const enum CellType {
-    DEFAULT, GREEN, END, EMPTY
+    DEFAULT, GREEN, EMPTY
 }
 
 export default CellType
